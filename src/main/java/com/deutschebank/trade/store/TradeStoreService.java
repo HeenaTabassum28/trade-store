@@ -15,19 +15,17 @@ import java.util.Optional;
 @AllArgsConstructor
 public class TradeStoreService {
 
-    private TradeStoreRepository tradeStoreRepository;
+    private final TradeStoreRepository tradeStoreRepository;
 
     public TradeStore addTrade(TradeStore tradeStore) throws Exception {
         Optional<TradeStore> trade = tradeStoreRepository.findById(tradeStore.getTradeId());
-        Date todayDate = getTodayDate();
+        Date todayDate = DateUtil.todayDate();
         verifyMaturityDate(tradeStore, todayDate);
         if (trade.isPresent()) {
             verifyVersion(tradeStore, trade.get());
             tradeStore.setCreatedDate(trade.get().getCreatedDate());
-            tradeStore.setExpired(trade.get().getExpired());
         } else {
             tradeStore.setCreatedDate(todayDate);
-            tradeStore.setExpired("N");
         }
         return tradeStoreRepository.save(tradeStore);
     }
@@ -42,10 +40,6 @@ public class TradeStoreService {
         if (tradeStore.getVersion() < trade.getVersion()) {
             throw new Exception("Trade version should be greater");
         }
-    }
-
-    private Date getTodayDate() {
-        return Date.from(LocalDate.now().atStartOfDay(ZoneOffset.UTC).toInstant());
     }
 
     public List<TradeStore> findAllTrades() {
