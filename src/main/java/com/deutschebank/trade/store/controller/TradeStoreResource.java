@@ -15,12 +15,12 @@ public class TradeStoreResource {
     private final TradeStoreService tradeStoreService;
 
     @PostMapping
-    public TradeStore addTrade(@RequestBody TradeStore tradeStore) {
+    public TradeStore addTrade(@RequestBody TradeStore tradeStore) throws Exception {
         return tradeStoreService.addTrade(tradeStore);
     }
 
     @GetMapping
-    public List<TradeStore> getTrades(){
+    public List<TradeStore> getTrades() {
         return tradeStoreService.findAllTrades();
     }
 }
